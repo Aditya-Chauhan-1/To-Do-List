@@ -1,30 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Aurora Tasks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
 </head>
 <body>
-    <div class="container">
-        <div class="todo-app">
-            <h2>To-Do-List</h2>
-            <label>
-            <div class="row">
-                <input type="text" name="" id="input-box"placeholder="Enter Task">
-                <button onclick="addTask()">Enter</button>
-                
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="logo" aria-hidden="true">✦</span>
+                <div>
+                    <h1>Aurora</h1>
+                    <p id="greeting">Your day, in focus</p>
+                </div>
             </div>
-            </label>
-            <ul id="list-container">
-            
-                <!-- <li class="checked">Task 1</li>
-                <li>2</li>
-                <li>3</li> -->
-            </ul>
+            <nav class="views" aria-label="Smart lists">
+                <button type="button" class="view-btn active" data-view="all">All tasks <span id="count-all">0</span></button>
+                <button type="button" class="view-btn" data-view="today">Today <span id="count-today">0</span></button>
+                <button type="button" class="view-btn" data-view="upcoming">Upcoming <span id="count-upcoming">0</span></button>
+                <button type="button" class="view-btn" data-view="overdue">Overdue <span id="count-overdue">0</span></button>
+                <button type="button" class="view-btn" data-view="high">High priority <span id="count-high">0</span></button>
+                <button type="button" class="view-btn" data-view="pinned">Pinned <span id="count-pinned">0</span></button>
+            </nav>
+            <div class="week-card">
+                <div class="week-head">
+                    <strong>This week</strong>
+                    <span id="streak-label">0 day streak</span>
+                </div>
+                <div class="week-bars" id="week-bars"></div>
+            </div>
+        </aside>
+
+        <div class="app">
+            <header class="topbar">
+                <div>
+                    <h2 id="view-title">All tasks</h2>
+                    <p class="today" id="today-label"></p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn" id="help-btn" type="button" title="Shortcuts (?)" aria-label="Keyboard shortcuts">?</button>
+                    <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle theme">
+                        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                        </svg>
+                        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <section class="stats" aria-label="Task progress">
+                <div class="stat-card progress-card">
+                    <div class="ring" id="progress-ring">
+                        <svg viewBox="0 0 36 36">
+                            <circle class="ring-bg" cx="18" cy="18" r="15.5"/>
+                            <circle class="ring-fill" id="ring-fill" cx="18" cy="18" r="15.5"/>
+                        </svg>
+                        <span id="progress-pct">0%</span>
+                    </div>
+                    <div>
+                        <h2>Progress</h2>
+                        <p id="progress-copy">Start by adding a task</p>
+                    </div>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-chip">
+                        <span class="stat-num" id="stat-total">0</span>
+                        <span>Total</span>
+                    </div>
+                    <div class="stat-chip">
+                        <span class="stat-num accent" id="stat-active">0</span>
+                        <span>Active</span>
+                    </div>
+                    <div class="stat-chip">
+                        <span class="stat-num success" id="stat-done">0</span>
+                        <span>Done</span>
+                    </div>
+                </div>
+            </section>
+
+            <form class="composer" id="task-form" autocomplete="off">
+                <div class="composer-main">
+                    <input type="text" id="task-input" maxlength="180" placeholder="Try: Finish report tomorrow !high #work" required>
+                    <button type="submit" class="add-btn">
+                        <span>Add</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </button>
+                </div>
+                <p class="hint">Quick add: <code>tomorrow</code> <code>!high</code> <code>#work</code> <code>daily</code> · Press <kbd>N</kbd> to focus</p>
+                <div class="composer-meta">
+                    <label class="field">
+                        <span>Priority</span>
+                        <select id="task-priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Category</span>
+                        <select id="task-category">
+                            <option value="personal">Personal</option>
+                            <option value="work">Work</option>
+                            <option value="study">Study</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Due date</span>
+                        <input type="date" id="task-date">
+                    </label>
+                    <label class="field">
+                        <span>Repeat</span>
+                        <select id="task-repeat">
+                            <option value="none" selected>Does not repeat</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                        </select>
+                    </label>
+                </div>
+            </form>
+
+            <div class="toolbar">
+                <div class="search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="M20 20l-3-3"/>
+                    </svg>
+                    <input type="search" id="search-input" placeholder="Search tasks...  (/)">
+                </div>
+                <div class="filters" role="tablist" aria-label="Filter tasks">
+                    <button type="button" class="filter active" data-filter="all" role="tab">All</button>
+                    <button type="button" class="filter" data-filter="active" role="tab">Active</button>
+                    <button type="button" class="filter" data-filter="completed" role="tab">Done</button>
+                </div>
+                <select id="sort-select" aria-label="Sort tasks">
+                    <option value="manual">Manual</option>
+                    <option value="created">Newest</option>
+                    <option value="priority">Priority</option>
+                    <option value="due">Due date</option>
+                    <option value="alpha">A–Z</option>
+                </select>
+            </div>
+
+            <ul id="task-list" class="task-list" aria-live="polite"></ul>
+
+            <div class="empty" id="empty-state" hidden>
+                <div class="empty-art" aria-hidden="true">✧</div>
+                <h3>You're all caught up</h3>
+                <p>Add a task above and keep the momentum going.</p>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-left">
+                    <button type="button" class="ghost-btn" id="export-btn">Export</button>
+                    <label class="ghost-btn import-label">Import<input type="file" id="import-file" accept="application/json" hidden></label>
+                </div>
+                <button type="button" class="ghost-btn" id="clear-completed">Clear completed</button>
+            </footer>
         </div>
     </div>
-<script src="script.js"></script>
+
+    <div class="focus-bar" id="focus-bar" hidden>
+        <div>
+            <small>Focus session</small>
+            <strong id="focus-title">Task</strong>
+        </div>
+        <span class="focus-time" id="focus-time">25:00</span>
+        <div class="focus-actions">
+            <button type="button" id="focus-pause">Pause</button>
+            <button type="button" id="focus-stop">Stop</button>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="help-modal" hidden>
+        <div class="modal" role="dialog" aria-labelledby="help-title">
+            <h3 id="help-title">Keyboard shortcuts</h3>
+            <ul class="shortcut-list">
+                <li><kbd>N</kbd> New task</li>
+                <li><kbd>/</kbd> Search</li>
+                <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> All / Active / Done</li>
+                <li><kbd>?</kbd> This panel</li>
+                <li><kbd>Esc</kbd> Close / cancel</li>
+            </ul>
+            <p class="modal-note">Quick add examples: <code>Pay rent tomorrow !high</code> · <code>Gym daily #health</code></p>
+            <button type="button" class="add-btn" id="help-close">Got it</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        <span id="toast-msg"></span>
+        <button type="button" id="toast-action" hidden>Undo</button>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
